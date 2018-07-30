@@ -34,12 +34,19 @@
     string))
 
 (defun sutysisku--word-match-p (record)
-  (if (eq "" helm-pattern) nil
-    (string-match-p helm-pattern (a-get record :word))))
+  (let ((word (a-get record :word)))
+    (if (or (string-equal "" helm-pattern)
+            (string-equal "" word))
+        nil
+      (string-match-p helm-pattern word))))
 
 (defun sutysisku--gloss-match-p (record)
-  (let ((gloss (a-get record :gloss)))
-    (string-match-p gloss helm-pattern)))
+  (let ((word (a-get record :word))
+        (gloss (a-get record :gloss)))
+    (if (or (string-equal "" helm-pattern)
+            (string-equal "" gloss))
+        nil
+      (string-match-p gloss helm-pattern))))
 
 (defun sutysisku--word-or-gloss-match-p (record)
   (or (sutysisku--word-match-p record)
@@ -153,8 +160,10 @@
       (helm
        :init (lambda (setq sutysisku--matches nil))
        :candidate-number-limit nil
-       :sources '(sutysisku--word-or-gloss-match-source
+       :sources '(sutysisku--word-match-source
+                  sutysisku--gloss-match-source
                   sutysisku--definition-match-source))
+
     (sutysisku-fetch 'sutysisku-search)))
 
 (provide 'hera)
