@@ -1,0 +1,13 @@
+* sutysisku.el
+
+This package provides a Lojban dictionary for Emacs. It is built ontop of:
+
+- [[https://github.com/plexus/a.el][a.el]] - association lists
+- [[https://github.com/emacs-helm/helm][helm]] - completion
+- [[https://github.com/tkf/emacs-request][emacs-request]] - http client
+
+** Usage
+
+Simply execute `M-x sutysisku-search`.
+
+On the first run, the dictionary data will be downloaded.
