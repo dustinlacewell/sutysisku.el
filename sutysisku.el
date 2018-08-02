@@ -166,5 +166,5 @@
 
     (sutysisku-fetch 'sutysisku-search)))
 
-(provide 'hera)
-;;; hera.el ends here
+(provide 'sutysisku)
+;;; sutysisku.el ends here

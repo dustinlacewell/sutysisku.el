@@ -238,7 +238,7 @@
 
 ** package epilogue
 #+begin_src emacs-lisp
-  (provide 'hera)
-  ;;; hera.el ends here
+  (provide 'sutysisku)
+  ;;; sutysisku.el ends here
 #+end_src
 
