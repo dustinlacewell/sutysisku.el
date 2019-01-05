@@ -1,30 +1,43 @@
 ;;; -*- lexical-binding: t -*-
-;;; sutysisku.el --- Sutysisku for Helm
-;; Copyright (C) 2018 Dustin Lacewell
+;;; sutysisku.el --- Lojban dictionary for Emacs
+;; Copyright (C) 2018 - 2019 Dustin Lacewell
 
 ;; Author: Dustin Lacewell <dlacewell@gmail.com>
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0") (ivy "0"))
-;; Keywords: hydra
-;; URL: http://github.com/dustinlacewell/hera
+;; Keywords: lojban dictionary helm ivy
+;; URL: http://github.com/dustinlacewell/sutysisku.el
+
 
 ;;; Commentary:
 
-;; This package offers Lojban dictionary search with Helm
+;; This package offers a Lojban dictionary, searchable with Helm or Ivy.
 
 ;;; Code:
+;;;; Requirements
 (require 'cl)
 (require 'a)
 (require 'helm)
 (require 'ivy)
 (require 'request)
 
-(setq sutysisku/data-url
-  "https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js")
+;;;; Customization
 
-(setq sutysisku--data nil)
+(defgroup sutysisku nil
+  "Settings for `sutysisku'."
+  :link '(url-link "http://github.com/dustinlacewell/sutysisku.el"))
 
-(setq sutysisku--matches nil)
+(defcustom sutysisku-data-url
+  "https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js"
+  "URL to JSON file containing dictionary data"
+  :type 'string)
+
+;;;; Variables
+
+(defvar sutysisku--data nil
+  "Contains a list of all dictionary entries.")
+
+;;;; Boilerplate
 
 (defun sutysisku--propertize-regex (regexp string &rest props)
   (let* ((matches (s-matched-positions-all regexp string)))
@@ -55,6 +68,9 @@
 
 (defun sutysisku--definition-match-p (record)
   (string-match-p helm-pattern (a-get record :definition)))
+
+
+;;;; Request Boilerplate
 
 (defun sutysisku--format-display (record)
   (format
@@ -97,12 +113,17 @@
     (message "Finished cleaning.")
     candidates))
 
+;;;; Helm Boilerplate
+
 (defun sutysisku--filtered-transform (pred candidates)
   (let ((results (cl-loop for c in candidates
                           for record = (cdr c)
                           if (apply pred (list record))
                           collect c)))
     results))
+
+
+
 
 (setq sutysisku--word-match-source
       (helm-build-sync-source "Word Match"
@@ -140,32 +161,7 @@
           (sutysisku--filtered-transform
            'sutysisku--definition-match-p c))))
 
-(defun sutysisku-fetch (&optional then)
-  (interactive)
-  (message "Downloading wordlist...")
-  (request
-   sutysisku/data-url
-   :sync nil
-   :parser (lambda () (search-forward "= ") (json-read))
-   :error (lambda (&key error-thrown &accept-other-keys &rest _)
-            (message (format "Error: %s" error-thrown)))
-   :success (lambda (&key data &accept-other-keys &rest _)
-              (message (format "%s words downloaded. Cleaning..." (length data)))
-              (setq sutysisku--data (sutysisku--clean-data data))
-              (message "Done!")
-              (when (functionp then) (funcall then)))))
-
-(defun sutysisku-search ()
-  (interactive)
-  (if (> (length sutysisku--data) 0)
-      (helm
-       :init (lambda (setq sutysisku--matches nil))
-       :candidate-number-limit nil
-       :sources '(sutysisku--word-match-source
-                  sutysisku--gloss-match-source
-                  sutysisku--definition-match-source))
-
-    (sutysisku-fetch 'sutysisku-search)))
+;;;; Ivy Boilerplate
 
 (defun sutysisku-ivy-candidates (str)
   (when (and (not (equal str nil)) (not (equal str "")))
@@ -230,6 +226,35 @@
                       (a-get record :gloss)
                       (a-get record :definition)))))
 
+;;;; API
+
+(defun sutysisku-fetch (&optional then)
+  (interactive)
+  (message "Downloading wordlist...")
+  (request
+   sutysisku-data-url
+   :sync nil
+   :parser (lambda () (search-forward "= ") (json-read))
+   :error (lambda (&key error-thrown &accept-other-keys &rest _)
+            (message (format "Error: %s" error-thrown)))
+   :success (lambda (&key data &accept-other-keys &rest _)
+              (message (format "%s words downloaded. Cleaning..." (length data)))
+              (setq sutysisku--data (sutysisku--clean-data data))
+              (message "Done!")
+              (when (functionp then) (funcall then)))))
+
+(defun sutysisku-search ()
+  (interactive)
+  (if (> (length sutysisku--data) 0)
+      (helm
+       :candidate-number-limit nil
+       :sources '(sutysisku--word-match-source
+                  sutysisku--gloss-match-source
+                  sutysisku--definition-match-source))
+
+    (sutysisku-fetch 'sutysisku-search)))
+
+
 (defun sutysisku-search-ivy ()
   (interactive)
   (if (> (length sutysisku--data) 0)
@@ -248,4 +273,5 @@
    ("a" sutysisku--search-ivy-kill-all-action "All")))
 
 (provide 'sutysisku)
+
 ;;; sutysisku.el ends here
