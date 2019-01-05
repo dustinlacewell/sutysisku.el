@@ -233,10 +233,11 @@
 (defun sutysisku-search-ivy ()
   (interactive)
   (if (> (length sutysisku--data) 0)
-      (ivy-read
-       "vlasisku: " 'sutysisku-ivy-candidates
-       :dynamic-collection t
-       :action 'sutysisku--search-ivy-kill-word-action)
+      (progn (setq this-command 'sutysisku-search-ivy)
+             (ivy-read
+              "vlasisku: " 'sutysisku-ivy-candidates
+              :dynamic-collection t
+              :action 'sutysisku--search-ivy-kill-word-action))
     (sutysisku-fetch 'sutysisku-search-ivy)))
 
 (ivy-set-actions
