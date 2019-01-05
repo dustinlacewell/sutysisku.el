@@ -251,6 +251,7 @@
                  for word = (a-get record :word)
                  for gloss = (a-get record :gloss)
                  for definition = (a-get record :definition)
+                 do (add-text-properties 0 1 `(record ,record) display)
                  do (cond
                      ((s-equals? str word)
                       (setf exact (append (list display) exact)))
@@ -273,18 +274,46 @@
                      ((s-contains? str definition)
                       (setf definition-substring (append (list display) definition-substring)))))
         (append
-               exact gloss-exact
-               word-prefix word-substring
-               gloss-prefix gloss-substring
-               definition-substring))))
+         exact gloss-exact
+         word-prefix word-substring
+         gloss-prefix gloss-substring
+         definition-substring))))
+
+  (defun sutysisku--search-ivy-kill-word-action (entry)
+    (let* ((record (get-text-property 0 'record entry))
+           (word (a-get record :word)))
+      (kill-new word)))
+
+  (defun sutysisku--search-ivy-kill-definition-action (entry)
+    (let* ((record (get-text-property 0 'record entry)))
+      (kill-new (a-get record :definition))))
+
+  (defun sutysisku--search-ivy-kill-gloss-action (entry)
+    (let* ((record (get-text-property 0 'record entry)))
+      (kill-new (a-get record :gloss))))
+
+  (defun sutysisku--search-ivy-kill-all-action (entry)
+    (let* ((record (get-text-property 0 'record entry)))
+      (kill-new (format "%s (%s): %s"
+                        (a-get record :word)
+                        (a-get record :gloss)
+                        (a-get record :definition)))))
 
   (defun sutysisku-search-ivy ()
     (interactive)
     (if (> (length sutysisku--data) 0)
         (ivy-read
          "vlasisku: " 'sutysisku-ivy-candidates
-         :dynamic-collection t)
+         :dynamic-collection t
+         :action 'sutysisku--search-ivy-kill-word-action)
       (sutysisku-fetch 'sutysisku-search-ivy)))
+
+  (ivy-set-actions
+   'sutysisku-search-ivy
+   '(("w" sutysisku--search-ivy-kill-word-action "Word")
+     ("g" sutysisku--search-ivy-kill-gloss-action "Gloss")
+     ("d" sutysisku--search-ivy-kill-definition-action "Definition")
+     ("a" sutysisku--search-ivy-kill-all-action "All")))
 #+end_src
 
 ** package epilogue
