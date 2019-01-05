@@ -7,4 +7,4 @@ clipboard.
 Check out the documentation: https://dustinlacewell.github.io/sutysisku.el
 
 #+ATTR_HTML: :style margin-left: auto; margin-right: auto;
-[[/docs/demo.png]]
+[[https://dustinlacewell.github.io/sutysisku.el/demo.webm][[[/docs/demo.png]]]]
