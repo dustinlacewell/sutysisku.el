@@ -1,10 +1,10 @@
-* sutysisk.el
+* sutysisku.el
 
 sutysisku.el is a Lojban dictionary for Emacs. It is searchable with either
 [[https://github.com/emacs-helm/helm/][Helm]] or [[https://github.com/abo-abo/swiper/][Ivy]]. Words, glosses, definitions or all three can be copied to the
 clipboard.
 
-Check out the documentation: https://dustinlacewell.github.io/sutysisku.el
+Check out the [[https://dustinlacewell.github.io/sutysisku.el][documentation]].
 
 #+ATTR_HTML: :style margin-left: auto; margin-right: auto;
 [[https://dustinlacewell.github.io/sutysisku.el/demo.webm][file:docs/demo.png]]
