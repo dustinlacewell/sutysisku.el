@@ -10,3 +10,14 @@ that specifies whether Ivy or Helm is used.
 Right now the wordlist JSON is only kept in memory. Probably best to cache this
 to a local file so that subsequent startups are quick. The fetch command can
 simply be invoked to redownload the file for updates.
+
+* TODO In-Memory Filter-cache
+As a user is typing, the search term will further narrow the
+candidates. Instead of filtering the whole set over and over, we can keep the
+candidates from the last input and filter those instead. This should be a lot
+faster if people complain about performance.
+
+Potentially, each character's cache along the way could be cached separately
+and if the user deletes some characters we'll already have the filter results
+for that input since we already computed it. We might invalidate this complex
+cache anytime the input is cleared?
