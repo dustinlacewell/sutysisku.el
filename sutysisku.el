@@ -27,7 +27,7 @@
   "Settings for `sutysisku'."
   :link '(url-link "http://github.com/dustinlacewell/sutysisku.el"))
 
-(defcustom sutysisku-data-url
+(defcustom 
   "https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js"
   "URL to JSON file containing dictionary data"
   :type 'string)
@@ -243,7 +243,7 @@
               (message "Done!")
               (when (functionp then) (funcall then)))))
 
-(defun sutysisku-search ()
+(defun sutysisku-search-helm ()
   (interactive)
   (if (> (length sutysisku--data) 0)
       (helm
@@ -252,7 +252,7 @@
                   sutysisku--gloss-match-source
                   sutysisku--definition-match-source))
 
-    (sutysisku-fetch 'sutysisku-search)))
+    (sutysisku-fetch 'sutysisku-search-helm)))
 
 
 (defun sutysisku-search-ivy ()
