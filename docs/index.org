@@ -32,9 +32,9 @@ sutysisku.el is not yet on MELPA.
 The primary configuration option is `sutysisku-data-url` which controls where
 sutysisku will fetch the dictionary data. The default is:
 
-```
-  https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js
-```
+
+https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js
+
 
 * Using Helm
 
@@ -64,3 +64,11 @@ If the wordlist hasn't already been fetched, both `sutysisku-search-helm` and
 
 If you would like to refresh the wordlist simply invoke the interactive command
 `sutysisku-fetch`.
+
+* Demo
+#+BEGIN_EXPORT html
+<video width="100%" controls>
+  <source src="demo.webm" type="video/webm">
+Your browser does not support the video tag.
+</video>
+#+END_EXPORT
