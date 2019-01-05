@@ -4,7 +4,7 @@
 
 ;; Author: Dustin Lacewell <dlacewell@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0"))
+;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0") (ivy "0"))
 ;; Keywords: hydra
 ;; URL: http://github.com/dustinlacewell/hera
 
@@ -16,6 +16,7 @@
 (require 'cl)
 (require 'a)
 (require 'helm)
+(require 'ivy)
 (require 'request)
 
 (setq sutysisku/data-url
