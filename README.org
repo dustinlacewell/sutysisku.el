@@ -1,13 +1,7 @@
-* sutysisku.el
+* sutysisk.el
 
-This package provides a Lojban dictionary for Emacs. It is built ontop of:
+sutysisku.el is a Lojban dictionary for Emacs. It is searchable with either
+[[https://github.com/emacs-helm/helm/][Helm]] or [[https://github.com/abo-abo/swiper/][Ivy]]. Words, glosses, definitions or all three can be copied to the
+clipboard.
 
-- [[https://github.com/plexus/a.el][a.el]] - association lists
-- [[https://github.com/emacs-helm/helm][helm]] - completion
-- [[https://github.com/tkf/emacs-request][emacs-request]] - http client
-
-** Usage
-
-Simply execute `M-x sutysisku-search`.
-
-On the first run, the dictionary data will be downloaded.
+Check out the documentation: https://dustinlacewell.github.io/sutysisku.el

@@ -1,0 +1,17 @@
+#+TITLE: sutysisku.el user manual
+#+AUTHOR: Dustin Lacewell
+#+EMAIL: dlacewell@gmail.com
+#+LANGUAGE: en
+
+#+SETUPFILE: https://raw.githubusercontent.com/fniessen/org-html-themes/master/setup/theme-readtheorg.setup
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="kbd-style.css"/>
+#+OPTIONS: H:6 num:6 toc:4
+#+STARTUP: indent
+* Introduction
+sutysisku.el is a fast Lojban dictionary for Emacs. It is named after the very
+useful online dictionary: https://la-lojban.github.io/sutysisku/en/#sisku/
+
+It can use [[https://github.com/emacs-helm/helm/][Helm]] or [[https://github.com/abo-abo/swiper/][Ivy]] to display words, glosses and definitions. As you type
+those entries are narrowed to just those that match. Selecting a word will copy
+it to the clipboard.
+

@@ -1,0 +1,12 @@
+* TODO Implement actions for Helm
+Currently the Ivy search supports copying the word, gloss, definition or all
+three to the clipboard. Helm needs this too!
+
+* TODO Make setting controlling whether Ivy or Helm is used
+Instead of having two distinct commands, a simple setting should be provided
+that specifies whether Ivy or Helm is used.
+
+* TODO Local file-cache
+Right now the wordlist JSON is only kept in memory. Probably best to cache this
+to a local file so that subsequent startups are quick. The fetch command can
+simply be invoked to redownload the file for updates.
