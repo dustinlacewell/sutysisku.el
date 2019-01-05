@@ -7,6 +7,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="custom.css"/>
 #+OPTIONS: H:6 num:6 toc:4
 #+STARTUP: indent
+
 * Introduction
 sutysisku.el is a fast Lojban dictionary for Emacs. It is named after the very
 useful online dictionary: https://la-lojban.github.io/sutysisku/en/#sisku/
@@ -15,3 +16,51 @@ It can use [[https://github.com/emacs-helm/helm/][Helm]] or [[https://github.com
 those entries are narrowed to just those that match. Selecting a word will copy
 it to the clipboard.
 
+
+* Installation
+sutysisku.el is not yet on MELPA.
+
+[[https://github.com/raxod502/straight.el][straight.el]] users can install straight from git:
+
+#+begin_src elisp
+  (use-package sutysisku
+    :straight (sutysisku :type git :host github :repo "dustinlacewell/straight.el"))
+#+end_src
+
+* Configuration
+
+The primary configuration option is `sutysisku-data-url` which controls where
+sutysisku will fetch the dictionary data. The default is:
+
+```
+  https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js
+```
+
+* Using Helm
+
+The interactive command `sutysisku-search-helm` will open a Helm buffer showing
+the Lojban lexicon. By typing into the mini-buffer, the display will narrow to
+just the entries which match. Selecting an entry will copy the word to the
+clipboard.
+
+* Using Ivy
+The interactive command `sutysisku-search-ivy` will open Ivy showing the Lojban
+lexicon. By typing into the mini-buffer, the display will narrow to just the
+entries which match. Selecting an entry will copy the word to the clipboard.
+
+Other actions are available as well. Hitting `M-o` (`ivy-dispatching-done`)
+presents a menu with the following options:
+
+| w | word                              |
+| g | gloss                             |
+| d | definition                        |
+| a | all "$word ($gloss): $definition" |
+
+Pressing one of the keys will place that part of the entry into the clipboard.
+
+* Fetching Wordlist
+If the wordlist hasn't already been fetched, both `sutysisku-search-helm` and
+`sutysisku-search-ivy` will start off by doing so.
+
+If you would like to refresh the wordlist simply invoke the interactive command
+`sutysisku-fetch`.

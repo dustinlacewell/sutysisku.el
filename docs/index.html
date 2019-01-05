@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-01-05 Sat 02:44 -->
+<!-- 2019-01-05 Sat 03:20 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>sutysisku.el user manual</title>
@@ -254,12 +254,18 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgd217520">1. Introduction</a></li>
+<li><a href="#org56a8b3e">1. Introduction</a></li>
+<li><a href="#org4616ebe">2. Installation</a></li>
+<li><a href="#orgd6c15ad">3. Configuration</a></li>
+<li><a href="#org6025b5c">4. Using Helm</a></li>
+<li><a href="#org53e1cee">5. Using Ivy</a></li>
+<li><a href="#org92a9aab">6. Fetching Wordlist</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgd217520" class="outline-2">
-<h2 id="orgd217520"><span class="section-number-2">1</span> Introduction</h2>
+
+<div id="outline-container-org56a8b3e" class="outline-2">
+<h2 id="org56a8b3e"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 sutysisku.el is a fast Lojban dictionary for Emacs. It is named after the very
@@ -273,10 +279,124 @@ it to the clipboard.
 </p>
 </div>
 </div>
+
+
+<div id="outline-container-org4616ebe" class="outline-2">
+<h2 id="org4616ebe"><span class="section-number-2">2</span> Installation</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+sutysisku.el is not yet on MELPA.
+</p>
+
+<p>
+<a href="https://github.com/raxod502/straight.el">straight.el</a> users can install straight from git:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-elisp">(use-package sutysisku
+  :straight (sutysisku :type git :host github :repo "dustinlacewell/straight.el"))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd6c15ad" class="outline-2">
+<h2 id="orgd6c15ad"><span class="section-number-2">3</span> Configuration</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The primary configuration option is `sutysisku-data-url` which controls where
+sutysisku will fetch the dictionary data. The default is:
+</p>
+
+<p>
+```
+  <a href="https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js">https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js</a>
+```
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6025b5c" class="outline-2">
+<h2 id="org6025b5c"><span class="section-number-2">4</span> Using Helm</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+The interactive command `sutysisku-search-helm` will open a Helm buffer showing
+the Lojban lexicon. By typing into the mini-buffer, the display will narrow to
+just the entries which match. Selecting an entry will copy the word to the
+clipboard.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org53e1cee" class="outline-2">
+<h2 id="org53e1cee"><span class="section-number-2">5</span> Using Ivy</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+The interactive command `sutysisku-search-ivy` will open Ivy showing the Lojban
+lexicon. By typing into the mini-buffer, the display will narrow to just the
+entries which match. Selecting an entry will copy the word to the clipboard.
+</p>
+
+<p>
+Other actions are available as well. Hitting `M-o` (`ivy-dispatching-done`)
+presents a menu with the following options:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">w</td>
+<td class="org-left">word</td>
+</tr>
+
+<tr>
+<td class="org-left">g</td>
+<td class="org-left">gloss</td>
+</tr>
+
+<tr>
+<td class="org-left">d</td>
+<td class="org-left">definition</td>
+</tr>
+
+<tr>
+<td class="org-left">a</td>
+<td class="org-left">all "$word ($gloss): $definition"</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Pressing one of the keys will place that part of the entry into the clipboard.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org92a9aab" class="outline-2">
+<h2 id="org92a9aab"><span class="section-number-2">6</span> Fetching Wordlist</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+If the wordlist hasn't already been fetched, both `sutysisku-search-helm` and
+`sutysisku-search-ivy` will start off by doing so.
+</p>
+
+<p>
+If you would like to refresh the wordlist simply invoke the interactive command
+`sutysisku-fetch`.
+</p>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Dustin Lacewell</p>
-<p class="date">Created: 2019-01-05 Sat 02:44</p>
+<p class="date">Created: 2019-01-05 Sat 03:20</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
