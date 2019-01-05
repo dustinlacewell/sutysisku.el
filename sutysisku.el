@@ -4,7 +4,7 @@
 
 ;; Author: Dustin Lacewell <dlacewell@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0")
+;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0"))
 ;; Keywords: hydra
 ;; URL: http://github.com/dustinlacewell/hera
 
@@ -214,7 +214,7 @@
       (ivy-read
        "vlasisku: " 'sutysisku-ivy-candidates
        :dynamic-collection t)
-    (sutysisku-fetch 'sutysisku-search)))
+    (sutysisku-fetch 'sutysisku-search-ivy)))
 
 (provide 'sutysisku)
 ;;; sutysisku.el ends here

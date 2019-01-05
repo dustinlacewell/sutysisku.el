@@ -10,7 +10,7 @@
 
   ;; Author: Dustin Lacewell <dlacewell@gmail.com>
   ;; Version: 0.1
-  ;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0")
+  ;; Package-Requires: ((emacs "24") (request "0") (helm "0") (a "0"))
   ;; Keywords: hydra
   ;; URL: http://github.com/dustinlacewell/hera
 
@@ -216,8 +216,6 @@
                 (setq sutysisku--data (sutysisku--clean-data data))
                 (message "Done!")
                 (when (functionp then) (funcall then)))))
-
-
 #+end_src
 
 *** search
@@ -233,7 +231,6 @@
                     sutysisku--definition-match-source))
 
       (sutysisku-fetch 'sutysisku-search)))
-
 #+end_src
 
 *** search-ivy
@@ -286,7 +283,7 @@
         (ivy-read
          "vlasisku: " 'sutysisku-ivy-candidates
          :dynamic-collection t)
-      (sutysisku-fetch 'sutysisku-search)))
+      (sutysisku-fetch 'sutysisku-search-ivy)))
 #+end_src
 
 ** package epilogue
