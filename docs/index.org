@@ -29,7 +29,7 @@ sutysisku.el is not yet on MELPA.
 
 * Configuration
 
-The primary configuration option is `sutysisku-data-url` which controls where
+The primary configuration option is =sutysisku-data-url= which controls where
 sutysisku will fetch the dictionary data. The default is:
 
 
@@ -38,17 +38,17 @@ https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js
 
 * Using Helm
 
-The interactive command `sutysisku-search-helm` will open a Helm buffer showing
+The interactive command =sutysisku-search-helm= will open a Helm buffer showing
 the Lojban lexicon. By typing into the mini-buffer, the display will narrow to
 just the entries which match. Selecting an entry will copy the word to the
 clipboard.
 
 * Using Ivy
-The interactive command `sutysisku-search-ivy` will open Ivy showing the Lojban
+The interactive command =sutysisku-search-ivy= will open Ivy showing the Lojban
 lexicon. By typing into the mini-buffer, the display will narrow to just the
 entries which match. Selecting an entry will copy the word to the clipboard.
 
-Other actions are available as well. Hitting `M-o` (`ivy-dispatching-done`)
+Other actions are available as well. Hitting =M-o= (=ivy-dispatching-done=)
 presents a menu with the following options:
 
 | w | word                              |
@@ -59,11 +59,11 @@ presents a menu with the following options:
 Pressing one of the keys will place that part of the entry into the clipboard.
 
 * Fetching Wordlist
-If the wordlist hasn't already been fetched, both `sutysisku-search-helm` and
-`sutysisku-search-ivy` will start off by doing so.
+If the wordlist hasn't already been fetched, both =sutysisku-search-helm= and
+=sutysisku-search-ivy= will start off by doing so.
 
 If you would like to refresh the wordlist simply invoke the interactive command
-`sutysisku-fetch`.
+=sutysisku-fetch=.
 
 * Demo
 #+BEGIN_EXPORT html

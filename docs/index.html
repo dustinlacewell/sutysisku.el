@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-01-05 Sat 03:36 -->
+<!-- 2019-01-05 Sat 03:40 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>sutysisku.el user manual</title>
@@ -254,19 +254,19 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgc34fc36">1. Introduction</a></li>
-<li><a href="#orgdd91512">2. Installation</a></li>
-<li><a href="#orgce17fc7">3. Configuration</a></li>
-<li><a href="#org883d525">4. Using Helm</a></li>
-<li><a href="#org8770331">5. Using Ivy</a></li>
-<li><a href="#orga317631">6. Fetching Wordlist</a></li>
-<li><a href="#org0a8cf81">7. Demo</a></li>
+<li><a href="#org875355d">1. Introduction</a></li>
+<li><a href="#orgc096dd4">2. Installation</a></li>
+<li><a href="#orgc26400c">3. Configuration</a></li>
+<li><a href="#org0c89eac">4. Using Helm</a></li>
+<li><a href="#orgb8c89d7">5. Using Ivy</a></li>
+<li><a href="#org248eb8e">6. Fetching Wordlist</a></li>
+<li><a href="#orga91ae5c">7. Demo</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgc34fc36" class="outline-2">
-<h2 id="orgc34fc36"><span class="section-number-2">1</span> Introduction</h2>
+<div id="outline-container-org875355d" class="outline-2">
+<h2 id="org875355d"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 sutysisku.el is a fast Lojban dictionary for Emacs. It is named after the very
@@ -282,8 +282,8 @@ it to the clipboard.
 </div>
 
 
-<div id="outline-container-orgdd91512" class="outline-2">
-<h2 id="orgdd91512"><span class="section-number-2">2</span> Installation</h2>
+<div id="outline-container-orgc096dd4" class="outline-2">
+<h2 id="orgc096dd4"><span class="section-number-2">2</span> Installation</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 sutysisku.el is not yet on MELPA.
@@ -301,11 +301,11 @@ sutysisku.el is not yet on MELPA.
 </div>
 </div>
 
-<div id="outline-container-orgce17fc7" class="outline-2">
-<h2 id="orgce17fc7"><span class="section-number-2">3</span> Configuration</h2>
+<div id="outline-container-orgc26400c" class="outline-2">
+<h2 id="orgc26400c"><span class="section-number-2">3</span> Configuration</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-The primary configuration option is `sutysisku-data-url` which controls where
+The primary configuration option is <code>sutysisku-data-url</code> which controls where
 sutysisku will fetch the dictionary data. The default is:
 </p>
 
@@ -317,11 +317,11 @@ sutysisku will fetch the dictionary data. The default is:
 </div>
 
 
-<div id="outline-container-org883d525" class="outline-2">
-<h2 id="org883d525"><span class="section-number-2">4</span> Using Helm</h2>
+<div id="outline-container-org0c89eac" class="outline-2">
+<h2 id="org0c89eac"><span class="section-number-2">4</span> Using Helm</h2>
 <div class="outline-text-2" id="text-4">
 <p>
-The interactive command `sutysisku-search-helm` will open a Helm buffer showing
+The interactive command <code>sutysisku-search-helm</code> will open a Helm buffer showing
 the Lojban lexicon. By typing into the mini-buffer, the display will narrow to
 just the entries which match. Selecting an entry will copy the word to the
 clipboard.
@@ -329,17 +329,17 @@ clipboard.
 </div>
 </div>
 
-<div id="outline-container-org8770331" class="outline-2">
-<h2 id="org8770331"><span class="section-number-2">5</span> Using Ivy</h2>
+<div id="outline-container-orgb8c89d7" class="outline-2">
+<h2 id="orgb8c89d7"><span class="section-number-2">5</span> Using Ivy</h2>
 <div class="outline-text-2" id="text-5">
 <p>
-The interactive command `sutysisku-search-ivy` will open Ivy showing the Lojban
+The interactive command <code>sutysisku-search-ivy</code> will open Ivy showing the Lojban
 lexicon. By typing into the mini-buffer, the display will narrow to just the
 entries which match. Selecting an entry will copy the word to the clipboard.
 </p>
 
 <p>
-Other actions are available as well. Hitting `M-o` (`ivy-dispatching-done`)
+Other actions are available as well. Hitting <code>M-o</code> (<code>ivy-dispatching-done</code>)
 presents a menu with the following options:
 </p>
 
@@ -380,23 +380,23 @@ Pressing one of the keys will place that part of the entry into the clipboard.
 </div>
 </div>
 
-<div id="outline-container-orga317631" class="outline-2">
-<h2 id="orga317631"><span class="section-number-2">6</span> Fetching Wordlist</h2>
+<div id="outline-container-org248eb8e" class="outline-2">
+<h2 id="org248eb8e"><span class="section-number-2">6</span> Fetching Wordlist</h2>
 <div class="outline-text-2" id="text-6">
 <p>
-If the wordlist hasn't already been fetched, both `sutysisku-search-helm` and
-`sutysisku-search-ivy` will start off by doing so.
+If the wordlist hasn't already been fetched, both <code>sutysisku-search-helm</code> and
+<code>sutysisku-search-ivy</code> will start off by doing so.
 </p>
 
 <p>
 If you would like to refresh the wordlist simply invoke the interactive command
-`sutysisku-fetch`.
+<code>sutysisku-fetch</code>.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org0a8cf81" class="outline-2">
-<h2 id="org0a8cf81"><span class="section-number-2">7</span> Demo</h2>
+<div id="outline-container-orga91ae5c" class="outline-2">
+<h2 id="orga91ae5c"><span class="section-number-2">7</span> Demo</h2>
 <div class="outline-text-2" id="text-7">
 <video width="100%" controls>
   <source src="demo.webm" type="video/webm">
@@ -407,7 +407,7 @@ Your browser does not support the video tag.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Dustin Lacewell</p>
-<p class="date">Created: 2019-01-05 Sat 03:36</p>
+<p class="date">Created: 2019-01-05 Sat 03:40</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
