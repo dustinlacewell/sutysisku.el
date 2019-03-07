@@ -27,7 +27,7 @@
   "Settings for `sutysisku'."
   :link '(url-link "http://github.com/dustinlacewell/sutysisku.el"))
 
-(defcustom 
+(defcustom sutysisku-data-url
   "https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js"
   "URL to JSON file containing dictionary data"
   :type 'string)
