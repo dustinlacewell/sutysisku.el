@@ -24,7 +24,7 @@ sutysisku.el is not yet on MELPA.
 
 #+begin_src elisp
   (use-package sutysisku
-    :straight (sutysisku :type git :host github :repo "dustinlacewell/straight.el"))
+    :straight (sutysisku :type git :host github :repo "dustinlacewell/sutysisku.el"))
 #+end_src
 
 * Configuration
