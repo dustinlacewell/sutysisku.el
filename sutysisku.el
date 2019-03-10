@@ -27,7 +27,7 @@
   "Settings for `sutysisku'."
   :link '(url-link "http://github.com/dustinlacewell/sutysisku.el"))
 
-(defcustom 
+(defcustom sutysisku-data-url
   "https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js"
   "URL to JSON file containing dictionary data"
   :type 'string)
@@ -37,8 +37,29 @@
 (defvar sutysisku--data nil
   "Contains a list of all dictionary entries.")
 
-;;;; Boilerplate
+(setq sutysisku-show-all t)
 
+(setq sutysisku-helm-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map helm-map)
+    (define-key map (kbd "TAB") 'hydra-sutysisku/body)
+    map))
+
+
+(setq sutysisku-include-gismu t)
+(setq sutysisku-include-lujvo t)
+(setq sutysisku-include-fuhivla t)
+(setq sutysisku-include-cmevla t)
+(setq sutysisku-include-cmavo t)
+(setq sutysisku-include-letterals t)
+(setq sutysisku-include-compounds t)
+(setq sutysisku-include-experimental t)
+(setq sutysisku-include-obsolete nil)
+
+
+
+;;;; Boilerplate
+;;;;; propertize-regex
 (defun sutysisku--propertize-regex (regexp string &rest props)
   (let* ((matches (s-matched-positions-all regexp string)))
     (cl-loop for match in matches
@@ -47,46 +68,72 @@
              do (add-text-properties start end props string))
     string))
 
-(defun sutysisku--word-match-p (record)
-  (let ((word (a-get record :word)))
-    (if (or (string-equal "" helm-pattern)
-            (string-equal "" word))
-        nil
-      (string-match-p helm-pattern word))))
-
-(defun sutysisku--gloss-match-p (record)
-  (let ((word (a-get record :word))
-        (gloss (a-get record :gloss)))
-    (if (or (string-equal "" helm-pattern)
-            (string-equal "" gloss))
-        nil
-      (string-match-p gloss helm-pattern))))
-
-(defun sutysisku--word-or-gloss-match-p (record)
-  (or (sutysisku--word-match-p record)
-      (sutysisku--gloss-match-p record)))
-
-(defun sutysisku--definition-match-p (record)
-  (string-match-p helm-pattern (a-get record :definition)))
-
-
-;;;; Request Boilerplate
-
+;;;;; format-display
 (defun sutysisku--format-display (record)
   (format
-           "%s %s\n%s"
-           (propertize (a-get record :word)
-             'face '(:height 2.0 :weight bold))
-           (propertize (a-get record :gloss)
-             'face '(:foreground "light grey" :slant italic))
-           (sutysisku--propertize-regex
-            "\\[[^]]*\\]"
-            (sutysisku--propertize-regex
-             "X[[:digit:]]+"
-             (a-get record :definition)
-             'face '(:foreground "deep sky blue"))
-            'face '(:foreground "dim grey"))))
+   "%s %s : %s\n%s"
+   (propertize (a-get record :word)
+               'face '(:height 2.0 :weight bold))
+   (propertize (a-get record :type)
+               'face '(:foreground "cyan" :slant italic))
+   (propertize (a-get record :gloss)
+               'face '(:foreground "light grey" :slant italic))
+   (sutysisku--propertize-regex
+    "\\[[^]]*\\]"
+    (sutysisku--propertize-regex
+     "X[[:digit:]]+"
+     (a-get record :definition)
+     'face '(:foreground "deep sky blue"))
+    'face '(:foreground "dim grey"))))
 
+;;;;; candidates
+(defun sutysisku--candidates (str)
+  (when (and (not (equal str nil)) (not (equal str "")))
+    (let ((exact)
+          (gloss-exact)
+          (word-prefix)
+          (word-substring)
+          (gloss-prefix)
+          (gloss-substring)
+          (definition-substring))
+
+      (cl-loop for item in sutysisku--data
+               for display = (car item)
+               for record = (cdr item)
+               for word = (a-get record :word)
+               for gloss = (a-get record :gloss)
+               for type = (a-get record :type)
+               for definition = (a-get record :definition)
+               do (add-text-properties 0 1 `(record ,record) display)
+               do (cond
+                   ((s-equals? str word)
+                    (setf exact (append (list item) exact)))
+
+                   ((s-equals? str gloss)
+                    (setf gloss-exact (append (list item) exact)))
+
+                   ((s-prefix? str word)
+                    (setf word-prefix (append (list item) word-prefix)))
+
+                   ((s-contains? str word)
+                    (setf word-substring (append (list item) word-substring)))
+
+                   ((s-prefix? str gloss)
+                    (setf gloss-prefix (append (list item) gloss-prefix)))
+
+                   ((s-contains? str gloss)
+                    (setf gloss-substring (append (list item) gloss-substring)))
+
+                   ((s-contains? str definition t)
+                    (setf definition-substring (append (list item) definition-substring)))))
+      (append
+       (reverse exact) (reverse gloss-exact)
+       (reverse word-prefix) (reverse word-substring)
+       (reverse gloss-prefix) (reverse gloss-substring)
+       (reverse definition-substring)))))
+
+;;;; Request Boilerplate
+;;;;; clean-definition
 (defun sutysisku--clean-definition (definition)
   (replace-regexp-in-string
    "\\$[[:alpha:]]+_\\([[:digit:]]\\)=[[:alpha:]]+_[[:digit:]]+\\$" "X\\1"
@@ -96,6 +143,7 @@
      "\\$[[:alpha:]]_\{\\([[:digit:]]+\\)\}\\$" "X\\1"
      (decode-coding-string definition 'utf-8)))))
 
+;;;;; clean-data
 (defun sutysisku--clean-data (candidates)
   (let ((candidates (cl-loop for c in candidates
                              for word = (format "%s" (car c))
@@ -114,98 +162,127 @@
     candidates))
 
 ;;;; Helm Boilerplate
+;;;;; hydra-sutysisku
+(nougat-hydra hydra-sutysisku (:color red)
+  ("  Copy"
+   (("w" (let ((candidates (helm-marked-candidates)))
+           (kill-new (string-join
+                      (cl-loop for c in candidates
+                               for record = (cdr c)
+                               collect (a-get record :word))
+                      ", "))) "word" :color blue)
+    ("s" (let ((candidates (helm-marked-candidates)))
+           (kill-new (string-join
+                      (cl-loop for c in candidates
+                               for record = (cdr c)
+                               for word = (a-get record :word)
+                               for definition = (a-get record :definition)
+                               collect (format "%s - %s" word definition))
+                      ", "))) "simple" :color blue)
+    ("a" (let ((candidates (helm-marked-candidates)))
+           (kill-new (string-join
+                      (cl-loop for c in candidates
+                               for record = (cdr c)
+                               for word = (a-get record :word)
+                               for type = (a-get record :type)
+                               for gloss = (a-get record :gloss)
+                               for definition = (a-get record :definition)
+                               collect (format "%s (%s) / %s: %s" word type gloss definition))
+                      ", "))
+           (call-interactively 'helm-keyboard-quit)) "all" :color blue))
+   "  Only"
+   (("G" (progn
+           (setq sutysisku-include-gismu t)
+           (setq sutysisku-include-lujvo nil)
+           (setq sutysisku-include-fuhivla nil)
+           (setq sutysisku-include-cmavo nil)
+           (setq sutysisku-include-cmene nil)
+           (setq sutysisku-include-letterals nil)
+           (helm-update)) "gismu")
+    ("L" (progn
+           (setq sutysisku-include-gismu nil)
+           (setq sutysisku-include-lujvo t)
+           (setq sutysisku-include-fuhivla nil)
+           (setq sutysisku-include-cmavo nil)
+           (setq sutysisku-include-cmene nil)
+           (setq sutysisku-include-letterals nil)
+           (helm-update)) "lujvo")
+    ("F" (progn
+           (setq sutysisku-include-gismu nil)
+           (setq sutysisku-include-lujvo nil)
+           (setq sutysisku-include-fuhivla t)
+           (setq sutysisku-include-cmavo nil)
+           (setq sutysisku-include-cmene nil)
+           (setq sutysisku-include-letterals nil)
+           (helm-update)) "fu'ivla")
+    ("C" (progn
+           (setq sutysisku-include-gismu nil)
+           (setq sutysisku-include-lujvo nil)
+           (setq sutysisku-include-fuhivla nil)
+           (setq sutysisku-include-cmavo t)
+           (setq sutysisku-include-cmene nil)
+           (setq sutysisku-include-letterals nil)
+           (helm-update)) "cmavo")
+    ("N" (progn
+           (setq sutysisku-include-gismu nil)
+           (setq sutysisku-include-lujvo nil)
+           (setq sutysisku-include-fuhivla nil)
+           (setq sutysisku-include-cmavo nil)
+           (setq sutysisku-include-cmene t)
+           (setq sutysisku-include-letterals t)
+           (helm-update)) "cmene"))
+   "  Toggle"
+   (("g" (progn
+           (setq sutysisku-include-gismu (not sutysisku-include-gismu))
+           (helm-update)) "gismu   %`sutysisku-include-gismu")
+    ("l" (progn
+           (setq sutysisku-include-lujvo (not sutysisku-include-lujvo))
+           (helm-update)) "lujvo   %`sutysisku-include-lujvo")
+    ("f" (progn
+           (setq sutysisku-include-fuhivla (not sutysisku-include-fuhivla))
+           (helm-update)) "fu'ivla %`sutysisku-include-fuhivla")
+    ("c" (progn
+           (setq sutysisku-include-cmavo (not sutysisku-include-cmavo))
+           (helm-update)) "cmavo   %`sutysisku-include-cmavo")
+    ("n" (progn
+           (setq sutysisku-include-cmevla (not sutysisku-include-cmevla))
+           (helm-update)) "cmevla  %`sutysisku-include-cmevla")
+    ("l" (progn
+           (setq sutysisku-include-letterals (not sutysisku-include-letterals))
+           (helm-update)) "letterals  %`sutysisku-include-letterals")
+    ("o" (progn
+           (setq sutysisku-include-compounds (not sutysisku-include-compounds))
+           (helm-update)) "compounds  %`sutysisku-include-compounds")
+    ("e" (progn
+           (setq sutysisku-include-experimental (not sutysisku-include-experimental))
+           (helm-update)) "experimental  %`sutysisku-include-experimental"))))
 
-(defun sutysisku--filtered-transform (pred candidates)
-  (let ((results (cl-loop for c in candidates
-                          for record = (cdr c)
-                          if (apply pred (list record))
-                          collect c)))
-    results))
+;;;;; helm-source
 
-
-
-
-(setq sutysisku--word-match-source
-      (helm-build-sync-source "Word Match"
-        :multiline t
-        :candidates 'sutysisku--data
-        :filtered-candidate-transformer
-        (lambda (c s)
-          (sutysisku--filtered-transform
-           'sutysisku--word-match-p c))))
-
-(setq sutysisku--gloss-match-source
-      (helm-build-sync-source "Gloss Match"
-        :multiline t
-        :candidates 'sutysisku--data
-        :filtered-candidate-transformer
-        (lambda (c s)
-          (sutysisku--filtered-transform
-           'sutysisku--gloss-match-p c))))
-
-(setq sutysisku--word-or-gloss-match-source
-      (helm-build-sync-source "Word or Gloss Match"
-        :multiline t
-        :candidates 'sutysisku--data
-        :filtered-candidate-transformer
-        (lambda (c s)
-          (sutysisku--filtered-transform
-           'sutysisku--word-or-gloss-match-p c))))
-
-(setq sutysisku--definition-match-source
-      (helm-build-sync-source "Definition Match"
-        :multiline t
-        :candidates 'sutysisku--data
-        :filtered-candidate-transformer
-        (lambda (c s)
-          (sutysisku--filtered-transform
-           'sutysisku--definition-match-p c))))
-
+(defvar sutysisku--helm-source
+      '((name . "sutysisku.el")
+        (volatile)
+        (multiline)
+        (candidates . (lambda ()
+                        (let* ((candidates (if (and (equal helm-pattern "") sutysisku-show-all)
+                                               sutysisku--data
+                                             (sutysisku--candidates helm-pattern))))
+                          (message "%s canidates" (length candidates))
+                          (cl-loop for c in candidates
+                                   for record = (cdr c)
+                                   for type = (a-get record :type)
+                                   if (and
+                                       (or sutysisku-include-compounds (not (cl-search "compound" type)))
+                                       (or sutysisku-include-experimental (not (cl-search "experiment" type)))
+                                       (or sutysisku-include-gismu (not (cl-search "gismu" type)))
+                                       (or sutysisku-include-lujvo (not (cl-search "lujvo" type)))
+                                       (or sutysisku-include-fuhivla (not (cl-search "fu'ivla" type)))
+                                       (or sutysisku-include-cmevla (not (cl-search "cmevla" type)))
+                                       (or sutysisku-include-cmavo (not (cl-search "cmavo" type)))
+                                       (or sutysisku-include-letterals (not (cl-search "letteral" type)))
+                                       (or sutysisku-include-obsolete (not (cl-search "obsolete" type))))
+                                   collect c))))))
 ;;;; Ivy Boilerplate
-
-(defun sutysisku-ivy-candidates (str)
-  (when (and (not (equal str nil)) (not (equal str "")))
-    (let ((exact)
-          (gloss-exact)
-          (word-prefix)
-          (word-substring)
-          (gloss-prefix)
-          (gloss-substring)
-          (definition-substring))
-      (cl-loop for item in sutysisku--data
-               for display = (car item)
-               for record = (cdr item)
-               for word = (a-get record :word)
-               for gloss = (a-get record :gloss)
-               for definition = (a-get record :definition)
-               do (add-text-properties 0 1 `(record ,record) display)
-               do (cond
-                   ((s-equals? str word)
-                    (setf exact (append (list display) exact)))
-
-                   ((s-equals? str gloss)
-                    (setf gloss-exact (append (list display) exact)))
-
-                   ((s-prefix? str word)
-                    (setf word-prefix (append (list display) word-prefix)))
-
-                   ((s-contains? str word)
-                    (setf word-substring (append (list display) word-substring)))
-
-                   ((s-prefix? str gloss)
-                    (setf gloss-prefix (append (list display) gloss-prefix)))
-
-                   ((s-contains? str gloss)
-                    (setf gloss-substring (append (list display) gloss-substring)))
-
-                   ((s-contains? str definition)
-                    (setf definition-substring (append (list display) definition-substring)))))
-      (append
-       exact gloss-exact
-       word-prefix word-substring
-       gloss-prefix gloss-substring
-       definition-substring))))
-
 (defun sutysisku--search-ivy-kill-word-action (entry)
   (let* ((record (get-text-property 0 'record entry))
          (word (a-get record :word)))
@@ -227,7 +304,7 @@
                       (a-get record :definition)))))
 
 ;;;; API
-
+;;;;; fetch
 (defun sutysisku-fetch (&optional then)
   (interactive)
   (message "Downloading wordlist...")
@@ -242,25 +319,24 @@
               (setq sutysisku--data (sutysisku--clean-data data))
               (message "Done!")
               (when (functionp then) (funcall then)))))
-
+;;;;; search-helm
 (defun sutysisku-search-helm ()
   (interactive)
   (if (> (length sutysisku--data) 0)
       (helm
        :candidate-number-limit nil
-       :sources '(sutysisku--word-match-source
-                  sutysisku--gloss-match-source
-                  sutysisku--definition-match-source))
-
+       :sources 'sutysisku--helm-source
+       :keymap sutysisku-helm-map
+       :marked-with-props 'record
+       :buffer "*sutysisku.el*")
     (sutysisku-fetch 'sutysisku-search-helm)))
-
-
+;;;;; search-ivy
 (defun sutysisku-search-ivy ()
   (interactive)
   (if (> (length sutysisku--data) 0)
       (progn (setq this-command 'sutysisku-search-ivy)
              (ivy-read
-              "vlasisku: " 'sutysisku-ivy-candidates
+              ": " 'sutysisku--candidates
               :dynamic-collection t
               :action 'sutysisku--search-ivy-kill-word-action))
     (sutysisku-fetch 'sutysisku-search-ivy)))

@@ -32,12 +32,9 @@ sutysisku.el is not yet on MELPA.
 The primary configuration option is =sutysisku-data-url= which controls where
 sutysisku will fetch the dictionary data. The default is:
 
-
 https://rawgit.com/La-Lojban/sutysisku/master/data/parsed-en.js
 
-
 * Using Helm
-
 The interactive command =sutysisku-search-helm= will open a Helm buffer showing
 the Lojban lexicon. By typing into the mini-buffer, the display will narrow to
 just the entries which match. Selecting an entry will copy the word to the
