@@ -110,7 +110,7 @@
                     (setf exact (append (list item) exact)))
 
                    ((s-equals? str gloss)
-                    (setf gloss-exact (append (list item) exact)))
+                    (setf gloss-exact (append (list item) gloss-exact)))
 
                    ((s-prefix? str word)
                     (setf word-prefix (append (list item) word-prefix)))
